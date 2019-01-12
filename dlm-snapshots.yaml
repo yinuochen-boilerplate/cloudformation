@@ -1,0 +1,56 @@
+Description: Basic LifecyclePolicy for Snapshots v1.0.0
+
+Parameters:
+  SnapshotRetainCount:
+    Type: Number
+    Description: The Number of snapshots to retain
+    Default: 5
+  StartTime:
+    Type: String
+    Description: Start time of the snapshot
+
+Resources:
+  DLMSnapshotRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "dlm.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSDataLifecycleManagerServiceRole
+  
+
+  BasicLifecyclePolicy:
+    Type: "AWS::DLM::LifecyclePolicy"
+    Properties:
+      Description: "Lifecycle Policy using CloudFormation"
+      State: "ENABLED"
+      ExecutionRoleArn: !Sub
+        - arn:aws:iam::${AWS::AccountId}:role/${DlmRole}
+        - { DlmRole: !Ref DLMSnapshotRole }
+      PolicyDetails:
+        ResourceTypes:
+          - "VOLUME"
+        TargetTags:
+          -
+            Key: "Backup"
+            Value: "True"
+          
+        Schedules:
+          -
+            Name: "Daily Snapshots"
+            CreateRule:
+              Interval: 1
+              IntervalUnit: "HOURS"
+              Times:
+                - !Ref StartTime
+            RetainRule:
+              Count: !Ref SnapshotRetainCount
+            CopyTags: true
