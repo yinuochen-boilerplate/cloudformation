@@ -1,4 +1,4 @@
-Description: Basic LifecyclePolicy for Snapshots v1.0.0
+Description: Basic LifecyclePolicy for Snapshots v1.1.0
 
 Parameters:
   SnapshotRetainCount:
@@ -8,6 +8,13 @@ Parameters:
   StartTime:
     Type: String
     Description: Start time of the snapshot
+  Interval:
+    Type: Number
+    Description: Interval between each snapshot, only 12 or 24
+    Default: 12
+    AllowedValues:
+      - 12
+      - 24
 
 Resources:
   DLMSnapshotRole:
@@ -47,7 +54,7 @@ Resources:
           -
             Name: "Daily Snapshots"
             CreateRule:
-              Interval: 1
+              Interval: !Ref Interval
               IntervalUnit: "HOURS"
               Times:
                 - !Ref StartTime
