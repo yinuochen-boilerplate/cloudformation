@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2019-01-12 - James Chen
+
+### Changed
+
+- Added Interval parameter to dlm-snapshots.yml
+
 ## [1.0.0] - 2019-01-12 - James Chen
 
 ### Added
